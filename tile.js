@@ -1,0 +1,9 @@
+export class Title {
+    constructor (gridElement) {
+        this.tileElement = document.createElement("div");
+        this.tileElement.classList.add("title");
+        this.value = Math.random() > 0.5 ? 2 : 4;
+        this.tileElement.textContent = this.value;
+        gridElement.append(this.tileElement);
+    }
+}
