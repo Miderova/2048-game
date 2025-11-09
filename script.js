@@ -152,3 +152,53 @@ function canMoveInGroup(group) {
         return targetCell.canAccept(cell.linkedTile);
     });
 }
+
+setupTouchControls();
+
+
+function setupTouchControls() {
+    let startX, startY, endX, endY;
+
+    window.addEventListener("touchstart", e => {
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+    });
+
+    window.addEventListener("touchend", async e => {
+        const touch = e.changedTouches[0];
+        endX = touch.clientX;
+        endY = touch.clientY;
+
+        const diffX = endX - startX;
+        const diffY = endY - startY;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX > 50) {
+                if (!canMoveRight()) return;
+                await moveRight();
+            } else if (diffX < -50) {
+                // влево
+                if (!canMoveLeft()) return;
+                await moveLeft();
+            }
+        } else {
+            if (diffY > 50) {
+                if (!canMoveDown()) return;
+                await moveDown();
+            } else if (diffY < -50) {
+                if (!canMoveUp()) return;
+                await moveUp();
+            }
+        }
+
+        const newTile = new Tile(gameBoard);
+        grid.getRandomEmptyCell().linkTile(newTile);
+
+        if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
+            await newTile.waitForAnimationEnd();
+            alert("Вы проиграли!");
+            return;
+        }
+    });
+}
